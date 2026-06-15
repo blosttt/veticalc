@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Custom scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #0075B4 transparent;
+  }
+  *::-webkit-scrollbar          { width: 5px; height: 5px; }
+  *::-webkit-scrollbar-track    { background: transparent; }
+  *::-webkit-scrollbar-thumb    { background-color: #0075B4; border-radius: 10px; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    @apply bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100;
+  }
+}
+
+@layer components {
+  /* Glass morphism card */
+  .glass-card {
+    @apply bg-white dark:bg-slate-800/80
+           backdrop-blur-sm
+           border border-slate-200/80 dark:border-slate-700/50
+           rounded-2xl shadow-sm;
+  }
+
+  /* Shared input style */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl
+           border border-slate-200 dark:border-slate-600
+           bg-white dark:bg-slate-900
+           text-slate-900 dark:text-white
+           placeholder-slate-400 dark:placeholder-slate-500
+           focus:outline-none
+           focus:ring-2 focus:ring-uct-blue dark:focus:ring-uct-yellow
+           focus:border-uct-blue dark:focus:border-uct-yellow
+           transition-all duration-200;
+  }
+
+  /* Primary button */
+  .btn-primary {
+    @apply px-5 py-2.5 rounded-xl font-bold text-sm
+           bg-uct-blue hover:bg-uct-dark text-white
+           shadow-md hover:shadow-lg
+           active:scale-95 transition-all duration-200;
+  }
+}

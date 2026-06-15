@@ -4,11 +4,13 @@ import {
   Droplets, History, ArrowLeftRight, Calculator, Trash2,
   Heart, Activity, Thermometer, Wind, CheckCircle, AlertCircle,
   Clock, Scale, FlaskConical, Info, BookOpen,
+  Clover, Cloud, TreePine, PawPrint,
 } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════
    CONSTANTS — SPECIES
-═══════════════════════════════════════════════════════════════ */
+   Optimized for Southern Chile (Livestock + Native Wildlife)
+   ═══════════════════════════════════════════════════════════════ */
 const SPECIES = {
   canine: {
     name: 'Canino', Icon: Dog,
@@ -26,6 +28,38 @@ const SPECIES = {
     },
     maintenanceRate: 2,
   },
+  bovine: {
+    name: 'Bovino', Icon: Clover,
+    constants: {
+      fc: '40–80 bpm', fr: '10–30 rpm', temp: '38.0–39.0°C',
+      pa: '110–140 mmHg', spo2: '>95%', glucemia: '2.2–4.2 mmol/L',
+    },
+    maintenanceRate: 2,
+  },
+  equine: {
+    name: 'Equino', Icon: PawPrint,
+    constants: {
+      fc: '28–44 bpm', fr: '8–16 rpm', temp: '37.0–38.5°C',
+      pa: '110–130 mmHg', spo2: '>95%', glucemia: '4.0–7.0 mmol/L',
+    },
+    maintenanceRate: 2,
+  },
+  ovine: {
+    name: 'Ovino', Icon: Cloud,
+    constants: {
+      fc: '70–90 bpm', fr: '12–20 rpm', temp: '38.5–40.0°C',
+      pa: '90–120 mmHg', spo2: '>95%', glucemia: '2.2–4.4 mmol/L',
+    },
+    maintenanceRate: 2,
+  },
+  pudu: {
+    name: 'Pudú/Silvestre', Icon: TreePine,
+    constants: {
+      fc: '80–120 bpm', fr: '20–40 rpm', temp: '38.0–39.0°C',
+      pa: '90–120 mmHg', spo2: '>95%', glucemia: '3.5–6.0 mmol/L',
+    },
+    maintenanceRate: 2.5,
+  },
   exotic: {
     name: 'Exótico', Icon: Bird,
     constants: {
@@ -38,43 +72,43 @@ const SPECIES = {
 
 /* ═══════════════════════════════════════════════════════════════
    CONSTANTS — DRUG DATABASE
-═══════════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════════ */
 const DRUGS = {
   'AINEs / Analgésicos': [
-    { name: 'Meloxicam',   doses: { canine: 0.2,  feline: 0.1,  exotic: 0.2  }, route: 'SC/VO',    concs: [1.5, 5],    note: 'AINE preferido en felinos. Dosis inicial SC, luego VO.' },
-    { name: 'Carprofeno',  doses: { canine: 4.4,  feline: 4.0,  exotic: 2.0  }, route: 'VO/SC',    concs: [50],        note: 'No usar >5 días sin evaluación hepática.' },
-    { name: 'Ketoprofeno', doses: { canine: 2.0,  feline: 2.0,  exotic: 2.0  }, route: 'IM/SC/VO', concs: [10],        note: 'Máx. 5 días. Riesgo GI en uso prolongado.' },
-    { name: 'Tramadol',    doses: { canine: 3.0,  feline: 2.0,  exotic: 5.0  }, route: 'VO/SC',    concs: [50],        note: 'Opioide sintético. Vigilar sedación excesiva.' },
-    { name: 'Metamizol',   doses: { canine: 25.0, feline: 15.0, exotic: 20.0 }, route: 'IV/IM/VO', concs: [500],       note: 'Administrar IV lento. Buena acción espasmolítica.' },
+    { name: 'Meloxicam',   doses: { canine: 0.2,  feline: 0.1,  bovine: 0.5,  equine: 0.6,  ovine: 1.0,  pudu: 0.2,  exotic: 0.2  }, route: 'SC/VO',    concs: [1.5, 5, 20], note: 'AINE preferido en felinos. En grandes animales usar dosis SC/IV.' },
+    { name: 'Carprofeno',  doses: { canine: 4.4,  feline: 4.0,  bovine: 1.4,  equine: 0.7,  ovine: 1.4,  pudu: 2.0,  exotic: 2.0  }, route: 'VO/SC',    concs: [50],        note: 'No usar >5 días sin evaluación hepática. Excelente analgesia perioperatoria.' },
+    { name: 'Ketoprofeno', doses: { canine: 2.0,  feline: 2.0,  bovine: 3.0,  equine: 2.2,  ovine: 3.0,  pudu: 2.0,  exotic: 2.0  }, route: 'IM/SC/VO', concs: [10, 50, 100], note: 'Potente antiinflamatorio. Máx. 3-5 días por riesgo de úlceras GI.' },
+    { name: 'Tramadol',    doses: { canine: 3.0,  feline: 2.0,  bovine: 1.0,  equine: 1.0,  ovine: 1.0,  pudu: 2.0,  exotic: 5.0  }, route: 'VO/SC/IV', concs: [50],        note: 'Opioide sintético. En equinos administrar IV lento para evitar excitación.' },
+    { name: 'Metamizol',   doses: { canine: 25.0, feline: 15.0, bovine: 30.0, equine: 30.0, ovine: 25.0, pudu: 20.0, exotic: 20.0 }, route: 'IV/IM/VO', concs: [500],       note: 'Administrar IV lento. Excelente para cólicos espasmódicos y fiebre.' },
   ],
   'Antibióticos': [
-    { name: 'Amoxicilina+Clav', doses: { canine: 12.5, feline: 12.5, exotic: 15.0 }, route: 'VO',    concs: [40, 125],  note: 'Amplio espectro. Administrar con alimento.' },
-    { name: 'Enrofloxacino',    doses: { canine: 5.0,  feline: 5.0,  exotic: 10.0 }, route: 'VO/IM', concs: [25, 50],   note: 'Evitar en animales en crecimiento.' },
-    { name: 'Cefalexina',       doses: { canine: 22.0, feline: 22.0, exotic: 20.0 }, route: 'VO',    concs: [250, 500], note: 'Cefalosporina 1ª gen. Buena tolerancia GI.' },
-    { name: 'Metronidazol',     doses: { canine: 15.0, feline: 10.0, exotic: 20.0 }, route: 'VO/IV', concs: [5],        note: 'Anaerobios y protozoarios. Evitar uso prolongado (riesgo neurológico).' },
-    { name: 'Doxiciclina',      doses: { canine: 5.0,  feline: 5.0,  exotic: 25.0 }, route: 'VO',    concs: [10, 20],   note: 'Administrar con agua abundante. Fotosensibilizante.' },
+    { name: 'Amoxicilina+Clav', doses: { canine: 12.5, feline: 12.5, bovine: 10.0, equine: null,  ovine: 10.0, pudu: 12.5, exotic: 15.0 }, route: 'VO/IM',   concs: [40, 125, 200], note: 'Amplio espectro. Contraindicado vía oral en equinos adultos.' },
+    { name: 'Enrofloxacino',    doses: { canine: 5.0,  feline: 5.0,  bovine: 2.5,  equine: 5.0,  ovine: 5.0,  pudu: 5.0,  exotic: 10.0 }, route: 'VO/IM/SC', concs: [25, 50, 100], note: 'Evitar en animales en crecimiento rápido (lesiones de cartílago).' },
+    { name: 'Cefalexina',       doses: { canine: 22.0, feline: 22.0, bovine: 10.0, equine: 10.0, ovine: 10.0, pudu: 15.0, exotic: 20.0 }, route: 'VO/IM',   concs: [250, 500], note: 'Cefalosporina 1ª gen. Buena tolerancia en rumiantes por vía parenteral.' },
+    { name: 'Metronidazol',     doses: { canine: 15.0, feline: 10.0, bovine: 15.0, equine: 20.0, ovine: 15.0, pudu: 15.0, exotic: 20.0 }, route: 'VO/IV',   concs: [5, 500],     note: 'Anaerobios y protozoarios. Riesgo de toxicidad neurológica a dosis altas.' },
+    { name: 'Doxiciclina',      doses: { canine: 5.0,  feline: 5.0,  bovine: 10.0, equine: 10.0, ovine: 5.0,  pudu: 5.0,  exotic: 25.0 }, route: 'VO',       concs: [10, 20, 100],  note: 'Administrar con agua/alimento. Precaución con fotosensibilización.' },
   ],
   'Anestesia / Sedación': [
-    { name: 'Propofol',         doses: { canine: 6.0,   feline: 6.0,  exotic: 10.0 }, route: 'IV',    concs: [10],     note: 'Inducción lenta (2 mg/kg/30s). Tener ventilación lista.' },
-    { name: 'Ketamina',         doses: { canine: 5.0,   feline: 5.0,  exotic: 20.0 }, route: 'IM/IV', concs: [50, 100], note: 'Siempre combinar con una benzodiacepina. No usar solo.' },
-    { name: 'Dexmedetomidina',  doses: { canine: 0.005, feline: 0.04, exotic: 0.01 }, route: 'IM/IV', concs: [0.5],    note: 'α2-agonista potente. Revertir con atipamezol (5× la dosis en mg).' },
-    { name: 'Midazolam',        doses: { canine: 0.2,   feline: 0.2,  exotic: 0.5  }, route: 'IV/IM', concs: [5],      note: 'Excelente premedicación. Revertible con flumazenil.' },
-    { name: 'Xilacina',         doses: { canine: 1.0,   feline: 1.0,  exotic: 2.0  }, route: 'IM/IV', concs: [20, 100], note: 'α2-agonista. Monitorear bradicardia y bradipnea.' },
+    { name: 'Propofol',         doses: { canine: 6.0,   feline: 6.0,  bovine: 3.0,  equine: 2.0,  ovine: 4.0,  pudu: 4.5,  exotic: 10.0 }, route: 'IV',      concs: [10],         note: 'Inducción lenta (2 mg/kg/30s). Monitorear apnea transitoria.' },
+    { name: 'Ketamina',         doses: { canine: 5.0,   feline: 5.0,  bovine: 4.0,  equine: 2.2,  ovine: 5.0,  pudu: 7.0,  exotic: 20.0 }, route: 'IM/IV',   concs: [50, 100],    note: 'Siempre asociar con un sedante (Xilacina/Midazolam) para evitar rigidez muscular.' },
+    { name: 'Dexmedetomidina',  doses: { canine: 0.005, feline: 0.04, bovine: 0.01, equine: 0.005, ovine: 0.01, pudu: 0.01, exotic: 0.01 }, route: 'IM/IV',   concs: [0.5],        note: 'α2-agonista potente. Revertir con atipamezol si es necesario.' },
+    { name: 'Midazolam',        doses: { canine: 0.2,   feline: 0.2,  bovine: 0.2,  equine: 0.1,  ovine: 0.2,  pudu: 0.3,  exotic: 0.5  }, route: 'IV/IM',   concs: [5, 50],      note: 'Benzodiacepina de acción corta. Miorrelajante excelente.' },
+    { name: 'Xilacina',         doses: { canine: 1.0,   feline: 1.0,  bovine: 0.05, equine: 0.8,  ovine: 0.1,  pudu: 0.2,  exotic: 2.0  }, route: 'IM/IV',   concs: [20, 100],    note: '⚠️ ¡Rumiantes son 10x más sensibles que equinos! Produce decúbito rápido.' },
   ],
   'Corticoides': [
-    { name: 'Dexametasona',      doses: { canine: 0.25, feline: 0.25, exotic: 0.5 }, route: 'IM/IV/VO', concs: [2, 4],    note: 'No usar sin diagnóstico definido. Potente inmunosupresor.' },
-    { name: 'Prednisolona',      doses: { canine: 1.0,  feline: 1.0,  exotic: 2.0  }, route: 'VO',       concs: [5, 20],   note: 'Retirada gradual tras >7 días de uso.' },
-    { name: 'Metilprednisolona', doses: { canine: 0.5,  feline: 0.5,  exotic: 1.0  }, route: 'IV/IM',    concs: [40, 125], note: 'Para shock o inflamación aguda severa.' },
+    { name: 'Dexametasona',      doses: { canine: 0.25, feline: 0.25, bovine: 0.06, equine: 0.06, ovine: 0.1,  pudu: 0.2,  exotic: 0.5 }, route: 'IM/IV/VO', concs: [2, 4],       note: '⚠️ En hembras gestantes al final del tercio puede inducir parto o aborto.' },
+    { name: 'Prednisolona',      doses: { canine: 1.0,  feline: 1.0,  bovine: 1.0,  equine: 1.0,  ovine: 1.0,  pudu: 1.0,  exotic: 2.0  }, route: 'VO',       concs: [5, 20],      note: 'Retirada gradual obligatoria tras tratamientos prolongados.' },
+    { name: 'Metilprednisolona', doses: { canine: 0.5,  feline: 0.5,  bovine: 0.5,  equine: 0.5,  ovine: 0.5,  pudu: 0.5,  exotic: 1.0  }, route: 'IV/IM',    concs: [40, 125],    note: 'Uso en shock espinal, trauma craneoencefálico o inflamación aguda.' },
   ],
   'Antiparasitarios': [
-    { name: 'Ivermectina',  doses: { canine: 0.2,  feline: 0.2,  exotic: 0.2  }, route: 'SC/VO', concs: [1, 10],  note: '⚠️ Contraindicado en Collie, Shetland y razas con mutación MDR1/ABCB1.' },
-    { name: 'Prazicuantel', doses: { canine: 5.0,  feline: 5.0,  exotic: 5.0  }, route: 'VO/SC', concs: [56.8],  note: 'Cestodicida eficaz. Dosis única generalmente suficiente.' },
-    { name: 'Fenbendazol',  doses: { canine: 50.0, feline: 50.0, exotic: 50.0 }, route: 'VO',    concs: [100],   note: 'Antinematodo. Administrar 3–5 días consecutivos.' },
+    { name: 'Ivermectina',  doses: { canine: 0.2,  feline: 0.2,  bovine: 0.2,  equine: 0.2,  ovine: 0.2,  pudu: 0.2,  exotic: 0.2  }, route: 'SC/VO',    concs: [1, 10],      note: '⚠️ Contraindicado en Collies y razas con mutación del gen MDR1.' },
+    { name: 'Prazicuantel', doses: { canine: 5.0,  feline: 5.0,  bovine: 7.5,  equine: 1.5,  ovine: 7.5,  pudu: 5.0,  exotic: 5.0  }, route: 'VO/SC',    concs: [56.8, 100],  note: 'Cestodicida de amplio espectro. Dosis de equinos para Anoplocephala.' },
+    { name: 'Fenbendazol',  doses: { canine: 50.0, feline: 50.0, bovine: 7.5,  equine: 7.5,  ovine: 5.0,  pudu: 7.5,  exotic: 50.0 }, route: 'VO',       concs: [100],        note: 'Antinematodo. Seguro en gestación. Rumiantes: tratar rebaño completo.' },
   ],
   'Cardiovascular': [
-    { name: 'Furosemida', doses: { canine: 2.0, feline: 1.0,  exotic: 1.0  }, route: 'VO/IV/IM', concs: [10, 50], note: 'Diurético de asa. Monitorear electrolitos (K⁺).' },
-    { name: 'Enalapril',  doses: { canine: 0.5, feline: 0.5,  exotic: null  }, route: 'VO',       concs: [2.5, 5], note: 'IECA. Útil en ICC y proteinuria crónica. No usar en exóticos.' },
-    { name: 'Atenolol',   doses: { canine: 0.5, feline: 6.25, exotic: null  }, route: 'VO',       concs: [25, 50], note: 'β-bloqueante. Gatos: dosis fija 6.25 mg/animal (ver nota).' },
+    { name: 'Furosemida', doses: { canine: 2.0, feline: 1.0,  bovine: 1.0,  equine: 1.0,  ovine: 1.0,  pudu: 1.0,  exotic: 1.0  }, route: 'VO/IV/IM', concs: [10, 50],     note: 'Diurético de asa potente. En equinos útil en hemorragia pulmonar inducida.' },
+    { name: 'Enalapril',  doses: { canine: 0.5, feline: 0.5,  bovine: null, equine: null, ovine: null, pudu: null, exotic: null }, route: 'VO',       concs: [2.5, 5],     note: 'Vasodilatador mixto (IECA). Sin uso reportado en rumiantes o equinos.' },
+    { name: 'Atenolol',   doses: { canine: 0.5, feline: 6.25, bovine: null, equine: null, ovine: null, pudu: null, exotic: null }, route: 'VO',       concs: [25, 50],     note: 'β-bloqueante selectivo. Felinos: dosis de 6.25 mg fijos por animal.' },
   ],
 };
 

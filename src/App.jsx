@@ -386,13 +386,13 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 pt-4 pb-2">
           {/* Logo row */}
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
-                <Syringe className="w-5 h-5 text-uct-yellow" />
+            <div className="flex items-center gap-3.5">
+              <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shadow-lg backdrop-blur-md">
+                <Syringe className="w-7 h-7 text-uct-yellow animate-pulse" />
               </div>
               <div>
-                <h1 className="text-xl font-black text-white tracking-tight leading-none">VetiCalc</h1>
-                <p className="text-[10px] text-blue-200/60 font-medium mt-0.5">
+                <h1 className="text-3xl font-black text-white tracking-tight leading-none drop-shadow-md">VetiCalc</h1>
+                <p className="text-[11px] text-blue-100/70 font-semibold mt-1 uppercase tracking-wider">
                   UCTemuco · Medicina Veterinaria
                 </p>
               </div>
